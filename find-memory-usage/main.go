@@ -5,12 +5,15 @@ import (
 	"runtime"
 )
 
-func printMemoryUsage() uint64 {
+func printMemoryUsage() {
 	var m runtime.MemStats
 	runtime.ReadMemStats(&m)
 
+	b2Mb := func(b uint64) uint64 {
+		return b / 1000 / 1000
+	}
+
 	log.Printf("Heap: %d mb, Total(so far): %d mb, Heap+Stack: %d mb \n", b2Mb(m.Alloc), b2Mb(m.TotalAlloc), b2Mb(m.Sys))
-	return m.Alloc
 }
 
 func main() {
@@ -24,8 +27,4 @@ func main() {
 
 	log.Println("Memory usage after")
 	printMemoryUsage()
-}
-
-func b2Mb(b uint64) uint64 {
-	return b / 1000 / 1000
 }
