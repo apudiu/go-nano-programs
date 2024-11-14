@@ -7,4 +7,5 @@ var RuleList = map[string]RuleFunc{
 	"min":      Min,
 	"max":      Max,
 	"email":    Email,
+	// make ways to add custom validation rules here to make it extendable
 }
