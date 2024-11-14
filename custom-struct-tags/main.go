@@ -3,17 +3,21 @@ package main
 import (
 	"customstructtags/validator"
 	"fmt"
+	"log"
 )
 
 func main() {
 	user := User{
-		Name:  "A",
-		Email: "abcd",
+		Name:  "AB",
+		Email: "ab@c.d",
 	}
 
 	if err := validator.Validate(user); err != nil {
-		fmt.Println("errors:", err)
+		fmt.Printf("errors: %v \n", err)
+		return
 	}
+
+	log.Println("No validation errors 😀")
 }
 
 type User struct {
