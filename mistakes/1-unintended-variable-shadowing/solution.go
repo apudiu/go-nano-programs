@@ -30,3 +30,5 @@ func createClient2() (*string, error) {
 	s := "client without logging"
 	return &s, nil
 }
+
+//todo: 2.10
