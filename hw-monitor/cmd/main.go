@@ -3,8 +3,25 @@ package main
 import (
 	"fmt"
 	"github.com/apudiu/go-nano-programs/hwmonitor/internal/hardware"
+	"log"
+	"net/http"
 	"time"
 )
+
+type server struct {
+	subscriberMessageBuffer int
+	mux                     http.ServeMux
+}
+
+func newServer() *server {
+	s := &server{
+		subscriberMessageBuffer: 10,
+	}
+
+	s.mux.Handle("/", http.FileServer(http.Dir("./htmx/")))
+
+	return s
+}
 
 func main() {
 	go func() {
@@ -32,5 +49,8 @@ func main() {
 		}
 	}()
 
-	time.Sleep(5 * time.Minute)
+	srv := newServer()
+	log.Fatalln(
+		http.ListenAndServe(":8000", &srv.mux),
+	)
 }
