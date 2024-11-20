@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 	"github.com/apudiu/go-nano-programs/hwmonitor/internal/hardware"
+	"github.com/apudiu/go-nano-programs/hwmonitor/templates"
 	"github.com/coder/websocket"
 	"log"
 	"net/http"
@@ -82,7 +83,11 @@ func newServer() *server {
 		subscribers:             make(map[*subscriber]struct{}),
 	}
 
-	s.mux.Handle("/", http.FileServer(http.Dir("./htmx/")))
+	s.mux.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
+		if _, err := w.Write(templates.MainFile); err != nil {
+			log.Println("Error writing template to response:", err)
+		}
+	})
 	s.mux.HandleFunc("/ws", s.subscriberHandler)
 
 	return s
