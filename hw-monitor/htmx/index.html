@@ -7,13 +7,15 @@
 </head>
 <body>
 <h1>Snebtaf Hardware Monitor</h1>
-<div id="update-timestamp">
-    Update timestamp: <span id="update-timestamp-display">Loading data...</span>
-</div>
-<div id="monitor-data">
-    <div id="system-data"></div>
-    <div id="cpu-data"></div>
-    <div id="disk-data"></div>
+<div hx-ext="ws" ws-connect="ws://localhost:8000/ws">
+    <div id="update-timestamp">
+        Update timestamp: <span id="update-timestamp-display">Loading data...</span>
+    </div>
+    <div id="monitor-data">
+        <div id="system-data"></div>
+        <div id="cpu-data"></div>
+        <div id="disk-data"></div>
+    </div>
 </div>
 
 <script
