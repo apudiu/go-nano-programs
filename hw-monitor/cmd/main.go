@@ -3,9 +3,11 @@ package main
 import (
 	"context"
 	"fmt"
+	"github.com/apudiu/go-nano-programs/hwmonitor/config"
 	"github.com/apudiu/go-nano-programs/hwmonitor/internal/hardware"
 	"github.com/apudiu/go-nano-programs/hwmonitor/templates"
 	"github.com/coder/websocket"
+	"html/template"
 	"log"
 	"net/http"
 	"sync"
@@ -84,8 +86,17 @@ func newServer() *server {
 	}
 
 	s.mux.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
-		if _, err := w.Write(templates.MainFile); err != nil {
-			log.Println("Error writing template to response:", err)
+		tmpl := template.New("index")
+		tmpl, err := tmpl.Parse(templates.MainFile)
+		if err != nil {
+			log.Fatalln("Failed to parse template:", err)
+		}
+
+		err2 := tmpl.Execute(w, map[string]any{
+			"url": config.Conf.GetWsUrl(),
+		})
+		if err2 != nil {
+			log.Fatalln("Failed to execute template:", err2)
 		}
 	})
 	s.mux.HandleFunc("/ws", s.subscriberHandler)
@@ -133,6 +144,6 @@ func main() {
 	}(srv)
 
 	log.Fatalln(
-		http.ListenAndServe(":8000", &srv.mux),
+		http.ListenAndServe(":"+config.Conf.Port, &srv.mux),
 	)
 }
