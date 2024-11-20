@@ -58,7 +58,6 @@ func (s *server) subscribe(ctx context.Context, w http.ResponseWriter, r *http.R
 	}
 }
 
-// todo: https://youtu.be/fBDUn7b9plw?t=1899
 func (s *server) addSubscriber(sc *subscriber) {
 	// as this is a concurrent situation, we need to safely write to the map
 	s.subscriberMu.Lock()
@@ -99,6 +98,7 @@ func newServer() *server {
 			log.Fatalln("Failed to execute template:", err2)
 		}
 	})
+
 	s.mux.HandleFunc("/ws", s.subscriberHandler)
 
 	return s
