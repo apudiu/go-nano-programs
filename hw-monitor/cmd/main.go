@@ -68,12 +68,12 @@ func (s *server) addSubscriber(sc *subscriber) {
 func (s *server) broadcast(msg []byte) {
 	// again need to be concurrency safe
 	s.subscriberMu.Lock()
+	defer s.subscriberMu.Unlock()
 
 	// broadcast the message to all subscribers
 	for sc := range s.subscribers {
 		sc.messages <- msg
 	}
-	s.subscriberMu.Unlock()
 }
 
 func newServer() *server {
@@ -112,21 +112,17 @@ func main() {
 				fmt.Println(err)
 			}
 
-			now := time.Now().Format("2006-01-02 15:04:05")
-			srvHtml := `<div hx-swap-oob="innerHTML:#update-timestamp">` + now + `</div>`
-			sysHtml := `<div hx-swap-oob="innerHTML:#system-data">` + sysInfo + `</div>`
-			cpuHtml := `<div hx-swap-oob="innerHTML:#cpu-data">` + cpuInfo + `</div>`
-			diskHtml := `<div hx-swap-oob="innerHTML:#disk-data">` + diskInfo + `</div>`
+			now := time.Now().Format(time.DateTime)
+			msg := []byte(`
+      			<div hx-swap-oob="innerHTML:#update-timestamp">
+        			<p><i style="color: green" class="fa fa-circle"></i> ` + now + `</p>
+      			</div>
+      			<div hx-swap-oob="innerHTML:#system-data">` + sysInfo + `</div>
+      			<div hx-swap-oob="innerHTML:#cpu-data">` + cpuInfo + `</div>
+      			<div hx-swap-oob="innerHTML:#disk-data">` + diskInfo + `</div>`,
+			)
 
-			s.broadcast([]byte(srvHtml))
-			s.broadcast([]byte(sysHtml))
-			s.broadcast([]byte(cpuHtml))
-			s.broadcast([]byte(diskHtml))
-
-			//fmt.Println(sysInfo)
-			//fmt.Println(cpuInfo)
-			//fmt.Println(diskInfo)
-
+			s.broadcast(msg)
 			time.Sleep(3 * time.Second)
 		}
 	}(srv)
