@@ -3,19 +3,19 @@
     <tbody>
       <tr>
         <td>Total disk space:</td>
-        <td>{{strconv.FormatUint(diskInfo.Total/gigabyteDiv, 10)}} GB</td>
+        <td>{{.total}}</td>
       </tr>
       <tr>
         <td>Used disk space:</td>
-        <td>{{strconv.FormatUint(diskInfo.Used/gigabyteDiv, 10)}} GB</td>
+        <td>{{.used}}</td>
       </tr>
       <tr>
         <td>Free disk space:</td>
-        <td>{{strconv.FormatUint(diskInfo.Free/gigabyteDiv, 10)}} GB</td>
+        <td>{{.free}}</td>
       </tr>
       <tr>
         <td>Percentage disk space usage:</td>
-        <td>{{strconv.FormatFloat(diskInfo.UsedPercent, 'f', 2, 64)}}%</td>
+        <td>{{.usedPercent}}%</td>
       </tr>
     </tbody>
   </table>
