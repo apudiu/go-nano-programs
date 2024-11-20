@@ -115,17 +115,17 @@ func main() {
 		for {
 			sysInfo, err := hardware.GetSystemInfo()
 			if err != nil {
-				fmt.Println(err)
+				fmt.Println("system info error", err)
 			}
 
 			cpuInfo, err := hardware.GetCpuInfo()
 			if err != nil {
-				fmt.Println(err)
+				fmt.Println("cpu info error", err)
 			}
 
 			diskInfo, err := hardware.GetDiskInfo()
 			if err != nil {
-				fmt.Println(err)
+				fmt.Println("disk info error", err)
 			}
 
 			now := time.Now().Format(time.DateTime)

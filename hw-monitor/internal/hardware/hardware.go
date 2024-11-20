@@ -1,11 +1,14 @@
 package hardware
 
 import (
+	"bytes"
 	"fmt"
+	"github.com/apudiu/go-nano-programs/hwmonitor/templates"
 	"github.com/shirou/gopsutil/v4/cpu"
 	"github.com/shirou/gopsutil/v4/disk"
 	"github.com/shirou/gopsutil/v4/host"
 	"github.com/shirou/gopsutil/v4/mem"
+	"html/template"
 	"runtime"
 	"strconv"
 )
@@ -26,18 +29,27 @@ func GetSystemInfo() (string, error) {
 		return "", err
 	}
 
-	html := "<div class='system-data'><table class='table table-striped table-hover table-sm'><tbody>"
-	html = html + "<tr><td>Operating System:</td> <td><i class='fa fa-brands fa-linux'></i> " + currentOs + "</td></tr>"
-	html = html + "<tr><td>Platform:</td><td> <i class='fa fa-brands fa-fedora'></i> " + hostInfo.Platform + "</td></tr>"
-	html = html + "<tr><td>Hostname:</td><td>" + hostInfo.Hostname + "</td></tr>"
-	html = html + "<tr><td>Number of processes running:</td><td>" + strconv.FormatUint(hostInfo.Procs, 10) + "</td></tr>"
-	html = html + "<tr><td>Total memory:</td><td>" + strconv.FormatUint(vmStat.Total/megabyteDiv, 10) + " MB</td></tr>"
-	html = html + "<tr><td>Free memory:</td><td>" + strconv.FormatUint(vmStat.Free/megabyteDiv, 10) + " MB</td></tr>"
-	html = html + "<tr><td>Percentage used memory:</td><td>" + strconv.FormatFloat(vmStat.UsedPercent, 'f', 2, 64) + "%</td></tr></tbody></table>"
+	tmpl, err := templates.GetTemplate("components/system.gohtml")
+	if err != nil {
+		return "", err
+	}
 
-	html = html + "</div>"
+	data := map[string]any{
+		"currentOs":         currentOs,
+		"platform":          hostInfo.Platform,
+		"hostname":          hostInfo.Hostname,
+		"processCount":      strconv.FormatUint(hostInfo.Procs, 10),
+		"memoryTotal":       strconv.FormatUint(vmStat.Total/megabyteDiv, 10) + " MB",
+		"memoryFree":        strconv.FormatUint(vmStat.Free/megabyteDiv, 10) + " MB",
+		"memoryUsedPercent": strconv.FormatFloat(vmStat.UsedPercent, 'f', 2, 64),
+	}
 
-	return html, nil
+	buff := bytes.NewBufferString("")
+	if err2 := tmpl.Execute(buff, data); err2 != nil {
+		return "", err2
+	}
+
+	return buff.String(), nil
 }
 
 func GetCpuInfo() (string, error) {
@@ -51,27 +63,34 @@ func GetCpuInfo() (string, error) {
 		return "", err
 	}
 
-	html := "<div class='cpu-data'><table class='table table-striped table-hover table-sm'><tbody>"
-
-	if len(cpuInfo) != 0 {
-		html = html + "<tr><td>Model Name:</td><td>" + cpuInfo[0].ModelName + "</td></tr>"
-		html = html + "<tr><td>Family:</td><td>" + cpuInfo[0].Family + "</td></tr>"
-		html = html + "<tr><td>Speed:</td><td>" + strconv.FormatFloat(cpuInfo[0].Mhz, 'f', 2, 64) + " MHz</td></tr>"
-	}
-
+	// just to make 2 groups out of available
 	firstCpus := percentage[:len(percentage)/2]
 	secondCpus := percentage[len(percentage)/2:]
 
-	html = html + "<tr><td>Cores: </td><td><div class='row mb-4'><div class='col-md-6'><table class='table table-sm'><tbody>"
-	for idx, cpupercent := range firstCpus {
-		html = html + "<tr><td>CPU [" + strconv.Itoa(idx) + "]: " + strconv.FormatFloat(cpupercent, 'f', 2, 64) + "%</td></tr>"
+	tmpl, err := templates.GetTemplate("components/cpu.gohtml", template.FuncMap{
+		"calculateCpuIndex": func(a int) int {
+			return a + len(firstCpus)
+		},
+	})
+	if err != nil {
+		return "", err
 	}
-	html = html + "</tbody></table></div><div class='col-md-6'><table class='table table-sm'><tbody>"
-	for idx, cpupercent := range secondCpus {
-		html = html + "<tr><td>CPU [" + strconv.Itoa(idx+8) + "]: " + strconv.FormatFloat(cpupercent, 'f', 2, 64) + "%</td></tr>"
+
+	data := map[string]any{
+		"cores":      len(cpuInfo),
+		"modelName":  cpuInfo[0].ModelName,
+		"family":     cpuInfo[0].Family,
+		"frequency":  cpuInfo[0].Mhz,
+		"firstCpus":  firstCpus,
+		"secondCpus": secondCpus,
 	}
-	html = html + "</tbody></table></div></div></td></tr></tbody></table></div>"
-	return html, nil
+
+	buff := bytes.NewBufferString("")
+	if err2 := tmpl.Execute(buff, data); err2 != nil {
+		return "", err2
+	}
+
+	return buff.String(), nil
 }
 
 func GetDiskInfo() (string, error) {

@@ -3,31 +3,31 @@
     <tbody>
     <tr>
       <td>Operating System:</td>
-      <td><i class='fa fa-brands fa-linux'></i> {{currentOs}}</td>
+      <td><i class='fa fa-brands fa-linux'></i> {{.currentOs}}</td>
     </tr>
     <tr>
       <td>Platform:</td>
-      <td><i class='fa fa-brands fa-fedora'></i> {{hostInfo.Platform}}</td>
+      <td><i class='fa fa-brands fa-fedora'></i> {{.platform}}</td>
     </tr>
     <tr>
       <td>Hostname:</td>
-      <td>{{hostInfo.Hostname}}</td>
+      <td>{{.hostname}}</td>
     </tr>
     <tr>
       <td>Number of processes running:</td>
-      <td>{{strconv.FormatUint(hostInfo.Procs, 10)}}</td>
+      <td>{{.processCount}}</td>
     </tr>
     <tr>
       <td>Total memory:</td>
-      <td>{{strconv.FormatUint(vmStat.Total/megabyteDiv, 10)}} MB</td>
+      <td>{{.memoryTotal}}</td>
     </tr>
     <tr>
       <td>Free memory:</td>
-      <td>{{strconv.FormatUint(vmStat.Free/megabyteDiv, 10)}} MB</td>
+      <td>{{.memoryFree}}</td>
     </tr>
     <tr>
       <td>Percentage used memory:</td>
-      <td>{{strconv.FormatFloat(vmStat.UsedPercent, 'f', 2, 64)}}%</td>
+      <td>{{.memoryUsedPercent}}%</td>
     </tr>
     </tbody>
   </table>
