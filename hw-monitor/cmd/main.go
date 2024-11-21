@@ -18,6 +18,8 @@ func main() {
 
 	go func(s *server.Server) {
 		for {
+			//todo: pause this when no subscriber is present, probably using a chan which also controls the interval
+
 			sysInfo, err := hardware.GetSystemInfo()
 			if err != nil {
 				fmt.Println("system info error", err)
