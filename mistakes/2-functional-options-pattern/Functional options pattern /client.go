@@ -10,7 +10,7 @@ func main() {
 		log.Fatalln(err)
 	}
 
-	log.Printf("Serving on %s", srv.Addr) // dsaf
+	log.Printf("Serving on %s", srv.Addr)
 
 	log.Fatal(srv.ListenAndServe())
 }
