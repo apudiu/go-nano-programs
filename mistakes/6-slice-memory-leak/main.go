@@ -27,7 +27,7 @@ func main() {
 }
 
 type Foo struct {
-	v []byte
+	v []byte // this will not be collected by GC as a slice is a type of pointer
 }
 
 func keepFirstTwoElementsOnlyProblem(foos []Foo) []Foo {
