@@ -15,4 +15,7 @@ func main() {
 func update(l []int) {
 	// modify values out of len
 	_ = append(l, 5)
+
+	// when len !> cap, append automatically allocates a new underlying array
+	// so source slice/ underlying array is not modified
 }
