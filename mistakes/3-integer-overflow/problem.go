@@ -11,5 +11,3 @@ func main() {
 	n++
 	fmt.Printf("%#v \n", n) // it became unsigned & this is not detected at compile time
 }
-
-//todo: 3.2.2
