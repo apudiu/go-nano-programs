@@ -36,5 +36,3 @@ func printAlloc2() {
 	runtime.ReadMemStats(&m)
 	fmt.Printf("%d MB\n", m.Alloc/1024/1024)
 }
-
-//todo: 4
