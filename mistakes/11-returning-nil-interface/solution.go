@@ -48,6 +48,9 @@ func (c Customer) Validate() error {
     }
 
     return nil
+
+    // Interface converted from a nil pointer isn’t a nil interface.
+    // For that reason, when we have to return an interface, we should not return a nil pointer but a nil value.
 }
 
 // ------------
