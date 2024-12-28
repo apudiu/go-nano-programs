@@ -50,22 +50,22 @@ func asyncReader(r io.Reader) {
 	// when receive from chan
 	for i := 0; i < workers; i++ {
 		fmt.Printf("%#v \n", 2)
-		go func(workerNo int) {
+		go func() {
 			defer wg.Done()
-			fmt.Printf("%#v W(%d) \n", 3, workerNo)
+			fmt.Printf("%#v W(%d) \n", 3, i)
 
 			for buf := range ch {
 				v := task(buf)
 				atomic.AddInt64(&count, int64(v))
-				fmt.Printf("%#v W(%d) \n", 4, workerNo)
+				fmt.Printf("%#v W(%d) \n", 4, i)
 			}
 
 			// different impl
 			//v := task(<-ch)
 			//atomic.AddInt64(&count, int64(v))
-			//fmt.Printf("%#v W(%d) \n", 4, workerNo)
+			//fmt.Printf("%#v W(%d) \n", 4, i)
 
-		}(i)
+		}()
 	}
 
 	fmt.Printf("%#v \n", 7)
