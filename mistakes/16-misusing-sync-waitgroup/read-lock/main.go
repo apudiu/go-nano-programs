@@ -1,15 +1,15 @@
 package main
 
 import (
-    "fmt"
-    "sync"
-    "time"
+	"fmt"
+	"sync"
+	"time"
 )
 
 func main() {
-    //usingMutex()
-    //usingChan()
-    usingSyncCond()
+	//usingMutex()
+	//usingChan()
+	usingSyncCond()
 }
 
 /**
@@ -19,36 +19,36 @@ func main() {
 */
 
 func usingMutex() {
-    type Donation struct {
-        mu      sync.RWMutex
-        balance int
-    }
+	type Donation struct {
+		mu      sync.RWMutex
+		balance int
+	}
 
-    donation := &Donation{}
+	donation := &Donation{}
 
-    f := func(goal int) {
-        donation.mu.RLock()
-        defer donation.mu.RUnlock()
+	f := func(goal int) {
+		donation.mu.RLock()
+		defer donation.mu.RUnlock()
 
-        for donation.balance < goal {
-            donation.mu.RUnlock()
-            donation.mu.RLock()
-        }
-        fmt.Printf("$%d goal met \n", donation.balance)
-    }
+		for donation.balance < goal {
+			donation.mu.RUnlock()
+			donation.mu.RLock()
+		}
+		fmt.Printf("$%d goal met \n", donation.balance)
+	}
 
-    go f(10)
-    go f(20)
+	go f(10)
+	go f(20)
 
-    go func() {
-        for {
-            donation.mu.Lock()
-            donation.balance++
-            donation.mu.Unlock()
-        }
-    }()
+	go func() {
+		for {
+			donation.mu.Lock()
+			donation.balance++
+			donation.mu.Unlock()
+		}
+	}()
 
-    time.Sleep(time.Second * 2)
+	time.Sleep(time.Second * 2)
 }
 
 /**
@@ -68,32 +68,32 @@ func usingMutex() {
 */
 
 func usingChan() {
-    type Donation struct {
-        ch      chan int
-        balance int
-    }
+	type Donation struct {
+		ch      chan int
+		balance int
+	}
 
-    donation := &Donation{
-        ch: make(chan int),
-    }
+	donation := &Donation{
+		ch: make(chan int),
+	}
 
-    f := func(goal int) {
-        for balance := range donation.ch {
-            if balance >= goal {
-                fmt.Printf("$%d goal met \n", balance)
-                return
-            }
-        }
-    }
+	f := func(goal int) {
+		for balance := range donation.ch {
+			if balance >= goal {
+				fmt.Printf("$%d goal met \n", balance)
+				return
+			}
+		}
+	}
 
-    go f(5)
-    go f(7)
+	go f(5)
+	go f(7)
 
-    for {
-        time.Sleep(time.Second)
-        donation.balance++
-        donation.ch <- donation.balance
-    }
+	for {
+		time.Sleep(time.Second)
+		donation.balance++
+		donation.ch <- donation.balance
+	}
 }
 
 /**
@@ -102,32 +102,32 @@ func usingChan() {
  */
 
 func usingSyncCond() {
-    type Donation struct {
-        cond    *sync.Cond
-        balance int
-    }
-    donation := &Donation{cond: sync.NewCond(&sync.Mutex{})}
+	type Donation struct {
+		cond    *sync.Cond
+		balance int
+	}
+	donation := &Donation{cond: sync.NewCond(&sync.Mutex{})}
 
-    f := func(goal int) {
-        donation.cond.L.Lock()
-        defer donation.cond.L.Unlock()
+	f := func(goal int) {
+		donation.cond.L.Lock()
+		defer donation.cond.L.Unlock()
 
-        for donation.balance < goal {
-            donation.cond.Wait()
-        }
+		for donation.balance < goal {
+			donation.cond.Wait()
+		}
 
-        fmt.Printf("$%d goal met \n", donation.balance)
-    }
+		fmt.Printf("$%d goal met \n", donation.balance)
+	}
 
-    go f(5)
-    go f(7)
+	go f(5)
+	go f(7)
 
-    for {
-        time.Sleep(time.Second)
-        donation.cond.L.Lock()
-        donation.balance++
-        donation.cond.L.Unlock()
+	for {
+		time.Sleep(time.Second)
+		donation.cond.L.Lock()
+		donation.balance++
+		donation.cond.L.Unlock()
 
-        donation.cond.Broadcast()
-    }
+		donation.cond.Broadcast()
+	}
 }
