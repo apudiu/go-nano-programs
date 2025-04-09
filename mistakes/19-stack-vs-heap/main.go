@@ -2,10 +2,10 @@ package main
 
 func main() {
 
-    ch := make(chan Foo, 1)
-    s := "x" // escapes to heap as points by Foo
-    bar := Foo{s: &s}
-    ch <- bar
+	ch := make(chan Foo, 1)
+	s := "x" // escapes to heap as points by Foo
+	bar := Foo{s: &s}
+	ch <- bar
 }
 
 type Foo struct{ s *string }
