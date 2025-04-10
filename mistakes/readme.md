@@ -1,2 +1,1 @@
-[//]: # (todo: 12.8)
-Goroutines profiling
+[//]: # (todo: 12.10)
