@@ -1,1 +1,2 @@
-[//]: # (todo: 12.4)
+[//]: # (todo: 12.8)
+Goroutines profiling
