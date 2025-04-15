@@ -1,1 +1,1 @@
-[//]: # (todo: 100 Go Mistakes and How to Avoid Them.epub is done)
+[//]: # (100 Go Mistakes and How to Avoid Them is done)
